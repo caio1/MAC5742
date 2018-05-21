@@ -7,10 +7,10 @@ LDFLAGS = -lpthread -lm
 OBJ = main.o functions.o 
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS) $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 main: $(OBJ)
-	gcc -o $@ $^ $(CFLAGS)
+	gcc -o $@ $^ $(CFLAGS) $(LDFLAGS)
 	./main testMatrix1 testMatrix2 matrixC
 
 .PHONY: clean
