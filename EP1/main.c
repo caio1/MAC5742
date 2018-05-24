@@ -33,7 +33,7 @@ int min(int64 a, int64 b)
 	return b;
 }
 
-double ** readMatrix(unsigned long long* height, unsigned long long* width, char* path){
+double ** readMatrix(int64* height, int64* width, char* path){
 	FILE *fp;
 	fp = fopen(path, "r");
 	double ** matrix;
@@ -41,11 +41,11 @@ double ** readMatrix(unsigned long long* height, unsigned long long* width, char
 	fscanf(fp, "%llu %llu", height, width);
 
 	matrix = malloc(*height * sizeof(double*));
-	for (unsigned long long i = 0; i < *height; i++){
+	for (int64 i = 0; i < *height; i++){
 		matrix[i] = calloc(*width, sizeof(double));
 	}
 
-	unsigned long long x, y;
+	int64 x, y;
 	double value;
 
 	while (fscanf(fp, "%llu %llu %lf", &y, &x, &value) != EOF){
@@ -80,8 +80,8 @@ void sumMatrices(double **A, double **B, double **C, int64 m, int64 n)
 double **multiplySequential(double **A, double **B, double **C, 
 	int64 bm, int64 bn, int64 bp, int64 m, int64 n, int64 p)
 {
-	printf("A from [%llu, %llu] to [%llu, %llu]\n", bm, bp, m, p);
-	printf("B from [%llu, %llu] to [%llu, %llu]\n\n", bp, bn, p, n);
+	// printf("A from [%llu, %llu] to [%llu, %llu]\n", bm, bp, m, p);
+	// printf("B from [%llu, %llu] to [%llu, %llu]\n\n", bp, bn, p, n);
 	for (int64 i = bm; i < m; i++)
 		for(int64 j = bn; j < n; j++)
 			for (int64 k = bp; k < p; k++)
@@ -90,20 +90,26 @@ double **multiplySequential(double **A, double **B, double **C,
 	return C;
 }
 
-void *multTest1(thread_args_ptr args){
+void *multTest1(void* args){
 
-	double **A = args->A;
-	double **B = args->B;
-	double **C = args->C;
-	int64 from_m = args->from_m;
-	int64 from_n = args->from_n;
-	int64 to_m = args->to_m;
-	int64 to_n = args->to_n;
-	int64 block_size = args->block_size;
-	int64 matrix_size = args->matrix_size;
+	thread_args_ptr threadArgs = (thread_args_ptr) args;
+
+	double **A = threadArgs->A;
+	double **B = threadArgs->B;
+	double **C = threadArgs->C;
+	int64 from_m = threadArgs->from_m;
+	int64 from_n = threadArgs->from_n;
+	int64 to_m = threadArgs->to_m;
+	int64 to_n = threadArgs->to_n;
+	int64 block_size = threadArgs->block_size;
+	int64 matrix_size = threadArgs->matrix_size;
+
+	// printf("matrix_size %llu\n", matrix_size);
 
 	for (int64 k = 0; k < matrix_size; k+=block_size)
 		multiplySequential(A, B, C, from_m, from_n, k, to_m, to_n, min(k + block_size, matrix_size));
+
+	// pthread_exit(NULL);
 }
 
 double **multiplyBlocks(double **A, double **B, double **C, int64 m, int64 n, int64 p){
@@ -119,12 +125,13 @@ double **multiplyBlocks(double **A, double **B, double **C, int64 m, int64 n, in
 	int t = 4;
 	int qt = n / t + (n % t != 0);
 
-	pthread_t threads[r*s];
-	thread_args threadsArgs[r*s];
+	int nthreads = r*s;
+	pthread_t threads[nthreads];
+	thread_args threadsArgs[nthreads];
 
+	int thread_index = 0;
 	for (int64 i = 0; i < m; i+=qr){
 		for (int64 j = 0; j < n; j+=qt){
-			int thread_index = 0;
 
 			threadsArgs[thread_index].A = A;
 			threadsArgs[thread_index].B = B;
@@ -144,6 +151,13 @@ double **multiplyBlocks(double **A, double **B, double **C, int64 m, int64 n, in
 
 			thread_index ++;
 		}
+	}
+
+	// printf("%d", thread_index);
+
+	for (int i = 0; i < nthreads; i++)
+	{
+		pthread_join(threads[i], NULL);
 	}
 
 	return C;
@@ -191,23 +205,24 @@ int main(int argc, char* argv[]) {
 	}
 
 	double **A, **B, **C;
-	unsigned long long m, n, p;
+	int64 m, n, p;
 
-	A = readMatrix(&m, &p, "4x4A");
-	B = readMatrix(&p, &n, "4x4B");
+	A = readMatrix(&m, &p, "8x6");
+	B = readMatrix(&p, &n, "6x10");
 
 	// A = readMatrix(&m, &p, argv[1]);
 	// B = readMatrix(&p, &n, argv[2]);
 
 	C = malloc(m * sizeof(double *));
-	for (unsigned long long i = 0; i < m; i++)
+	for (int64 i = 0; i < m; i++)
 	{
 		C[i] = calloc(n, sizeof(double));
 	}
 
-	multiplyBlocks(A, B, C, m, n, p);
 	// multiplySequential(A, B, C, 0, 0, 0, m, n, p);
-	saveMatrix(C, m, n, "4x4C");
+	// saveMatrix(C, m, n, "sequential");
+	multiplyBlocks(A, B, C, m, n, p);
+	saveMatrix(C, m, n, "blocks");
 
 	// double **M;
 	// M = generateRandomMatrix(6, 10);
