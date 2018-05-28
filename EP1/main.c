@@ -1,81 +1,5 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <math.h>
-#include <string.h>
-#include <pthread.h>
-
 #include "functions.h"
-
-typedef unsigned long long int64;
-
-typedef struct thread_args
-{
-	double ** A;
-	double ** B;
-	double ** C;
-	int64 from_m;
-	int64 from_n;
-	int64 to_m;
-	int64 to_n;
-	int64 block_size;
-	int64 matrix_size;
-
-} thread_args, *thread_args_ptr;
-
-
-int min(int64 a, int64 b)
-{
-	if (a < b)
-	{
-		return a;
-	}
-	return b;
-}
-
-double ** readMatrix(int64* height, int64* width, char* path){
-	FILE *fp;
-	fp = fopen(path, "r");
-	double ** matrix;
-
-	fscanf(fp, "%llu %llu", height, width);
-
-	matrix = malloc(*height * sizeof(double*));
-	for (int64 i = 0; i < *height; i++){
-		matrix[i] = calloc(*width, sizeof(double));
-	}
-
-	int64 x, y;
-	double value;
-
-	while (fscanf(fp, "%llu %llu %lf", &y, &x, &value) != EOF){
-		matrix[y-1][x-1] = value;
-	}
-
-	return matrix;
-}
-
-void saveMatrix(double **M, int64 height, int64 width, char* path){
-	FILE *fp;
-	fp = fopen(path, "w");
-
-	fprintf(fp, "%llu %llu\n", height, width);
-
-	for (int64 i = 0; i < height; i++)
-	{
-		for (int64 j = 0; j < width; j++)
-		{
-			fprintf(fp, "%llu %llu %lf\n", i + 1, j + 1, M[i][j]);
-		}
-	}
-}
-
-void sumMatrices(double **A, double **B, double **C, int64 m, int64 n)
-{
-	for (int64 i = 0; i < m; i++)
-		for(int64 j = 0; j < n; j++)
-			C[i][j] = A[i][j] + B[i][j];
-}
+#include "iofunctions.h"
 
 double **multiplySequential(double **A, double **B, double **C, 
 	int64 bm, int64 bn, int64 bp, int64 m, int64 n, int64 p)
@@ -90,7 +14,7 @@ double **multiplySequential(double **A, double **B, double **C,
 	return C;
 }
 
-void *multTest1(void* args){
+void *multBlocksPthreads(void* args){
 
 	thread_args_ptr threadArgs = (thread_args_ptr) args;
 
@@ -104,12 +28,10 @@ void *multTest1(void* args){
 	int64 block_size = threadArgs->block_size;
 	int64 matrix_size = threadArgs->matrix_size;
 
-	// printf("matrix_size %llu\n", matrix_size);
-
 	for (int64 k = 0; k < matrix_size; k+=block_size)
 		multiplySequential(A, B, C, from_m, from_n, k, to_m, to_n, min(k + block_size, matrix_size));
 
-	// pthread_exit(NULL);
+	pthread_exit(NULL);
 }
 
 double **multiplyBlocks(double **A, double **B, double **C, int64 m, int64 n, int64 p){
@@ -144,7 +66,7 @@ double **multiplyBlocks(double **A, double **B, double **C, int64 m, int64 n, in
 			threadsArgs[thread_index].matrix_size = p;
 
 
-			pthread_create(&(threads[thread_index]), NULL, multTest1, &(threadsArgs[thread_index]));
+			pthread_create(&(threads[thread_index]), NULL, multBlocksPthreads, &(threadsArgs[thread_index]));
 			// for (int64 k = 0; k < p; k+=qs)
 			// 	multiplySequential(A, B, C, i, j, k,
 			// 					   min(i + qr, m), min(j + qt, n), min(k + qs, p));
@@ -152,8 +74,6 @@ double **multiplyBlocks(double **A, double **B, double **C, int64 m, int64 n, in
 			thread_index ++;
 		}
 	}
-
-	// printf("%d", thread_index);
 
 	for (int i = 0; i < nthreads; i++)
 	{
@@ -163,38 +83,7 @@ double **multiplyBlocks(double **A, double **B, double **C, int64 m, int64 n, in
 	return C;
 }
 
-//creating test matrixes
-double **generateRandomMatrix(int64 height, int64 width){
-	srand(time(NULL));
 
-	double **M;
-
-	M = malloc(height * sizeof(double*));
-
-	for (int64 i = 0; i < height; i++)
-	{
-		M[i] = malloc(width * sizeof(double));
-		for (int64 j = 0; j < width; j++)
-		{
-			M[i][j] = (double)rand()/1000;
-		}
-	}
-
-	return M;
-}
-
-void printMatrix(double **M, int64 height, int64 width){
-	for (int64 i = 0; i < height; i++)
-	{
-		printf("[");
-		for (int64 j = 0; j < width; j++)
-		{
-
-			printf("%lf, ", M[i][j]);
-		}
-		printf("]\n");
-	}
-}
 
 int main(int argc, char* argv[]) {
 
@@ -219,10 +108,10 @@ int main(int argc, char* argv[]) {
 		C[i] = calloc(n, sizeof(double));
 	}
 
-	// multiplySequential(A, B, C, 0, 0, 0, m, n, p);
-	// saveMatrix(C, m, n, "sequential");
-	multiplyBlocks(A, B, C, m, n, p);
-	saveMatrix(C, m, n, "blocks");
+	multiplySequential(A, B, C, 0, 0, 0, m, n, p);
+	saveMatrix(C, m, n, "sequential");
+	// multiplyBlocks(A, B, C, m, n, p);
+	// saveMatrix(C, m, n, "blocks");
 
 	// double **M;
 	// M = generateRandomMatrix(6, 10);

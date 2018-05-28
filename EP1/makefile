@@ -2,9 +2,9 @@ CC=gcc
 # CFLAGS=-I.
 # CFLAGS  = -march=native -flto -g -Wall -pedantic -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
 CFLAGS  = -g -Wall -pedantic
-DEPS = 
+DEPS = functions.h iofunctions.h
 LDFLAGS = -lpthread -lm
-OBJ = main.o functions.o 
+OBJ = main.o functions.o iofunctions.o
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
