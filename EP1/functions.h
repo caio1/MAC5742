@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <pthread.h>
+#include <omp.h>
 
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
@@ -26,9 +27,10 @@ typedef struct thread_args{
 
 
 int min(int64 a, int64 b);
+int max(int64 a, int64 b);
+int amountOfBlocks(int64 n);
 double **generateRandomMatrix(int64 height, int64 width);
 void printMatrix(double **M, int64 height, int64 width);
-
-
+void freeMatrix(double **M, int64 m);
 
 #endif

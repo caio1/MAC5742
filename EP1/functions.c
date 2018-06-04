@@ -7,6 +7,30 @@ int min(int64 a, int64 b){
 	return b;
 }
 
+int max(int64 a, int64 b){
+	if (a > b){
+		return a;
+	}
+	return b;
+}
+
+int amountOfBlocks(int64 n){
+	int t1 = max(2 * n - min(80, 2*n), 1);
+	int t2 = sqrt(t1);
+	int t3 = min(t2, 80);
+
+	return t3;
+}
+
+void freeMatrix(double **M, int64 m)
+{
+	for (int64 i = 0; i < m; i++)
+	{
+		free(M[i]);
+	}
+	free(M);
+}
+
 //creating test matrixes
 double **generateRandomMatrix(int64 height, int64 width){
 	srand(time(NULL));
@@ -20,7 +44,7 @@ double **generateRandomMatrix(int64 height, int64 width){
 		M[i] = malloc(width * sizeof(double));
 		for (int64 j = 0; j < width; j++)
 		{
-			M[i][j] = (double)rand()/1000;
+			M[i][j] = (double)rand()/10000;
 		}
 	}
 
@@ -39,3 +63,5 @@ void printMatrix(double **M, int64 height, int64 width){
 		printf("]\n");
 	}
 }
+
+
