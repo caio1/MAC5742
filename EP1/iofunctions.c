@@ -1,4 +1,4 @@
-#include "iofunctions.h"
+#include "ioFunctions.h"
 
 double ** readMatrix(int64* height, int64* width, char* path){
 	FILE *fp;

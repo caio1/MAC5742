@@ -1,17 +1,16 @@
-CC=gcc-8
+CC=gcc
 # CFLAGS=-I.
 # CFLAGS  = -march=native -flto -g -Wall -pedantic -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
-CFLAGS  = -g -Wall -pedantic -fopenmp
-DEPS = functions.h iofunctions.h
+CFLAGS  = -O3 -march=native -flto -g -Wall -pedantic -fopenmp
+DEPS = helperFunctions.h ioFunctions.h
 LDFLAGS = -lpthread -lm 
-OBJ = main.o functions.o iofunctions.o
+OBJ = main.o helperFunctions.o ioFunctions.o
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 main: $(OBJ)
-	gcc-8 -o $@ $^ $(CFLAGS) $(LDFLAGS)
-	./main 1000x1000 1000x1000 matrixC
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
 
 .PHONY: clean
 clean:

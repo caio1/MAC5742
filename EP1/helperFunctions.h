@@ -1,13 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <time.h>
 #include <math.h>
 #include <string.h>
 #include <pthread.h>
 #include <omp.h>
 
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
+#ifndef HELPERFUNCTIONS_H
+#define HELPERFUNCTIONS_H
 
 typedef unsigned long long int64;
 

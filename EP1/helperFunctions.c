@@ -1,4 +1,4 @@
-#include "functions.h"
+#include "helperFunctions.h"
 
 int min(int64 a, int64 b){
 	if (a < b){

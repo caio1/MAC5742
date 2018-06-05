@@ -1,10 +1,9 @@
-#include "functions.h"
-#include "iofunctions.h"
+#include "helperFunctions.h"
+#include "ioFunctions.h"
 
 double **multiplySequential(double **A, double **B, double **C, 
 	int64 bm, int64 bn, int64 bp, int64 m, int64 n, int64 p)
 {
-
 	for (int64 i = bm; i < m; i++)
 		for(int64 j = bn; j < n; j++)
 			for (int64 k = bp; k < p; k++)
@@ -111,7 +110,7 @@ double **multiplyBlocksOpenMP(double **A, double **B, double **C, int64 m, int64
 		for (int64 j = 0; j < n; j += qt)
 		{
 			int64 k = 0;
-			#pragma omp parallel for
+			#pragma omp parallel for private(k)
 			for (k = 0; k < p; k+=qs){
 				// printf("My number is :%d\n", omp_get_thread_num());
 				multiplySequential(A, B, C, i, j, k, min(i + qr, m), min(j + qt, n), min(k + qs, p));
@@ -163,7 +162,7 @@ int main(int argc, char* argv[]) {
 	gettimeofday(&stop, NULL);
 
 	double time_elapsed = (1000.0 * (stop.tv_sec - start.tv_sec) + (0.001 * (stop.tv_usec - start.tv_usec)));
-	printf("Time elapsed: %f\n", time_elapsed);
+	printf("Time elapsed: %fs\n", time_elapsed);
 
 	saveMatrix(C, m, n, argv[4]);
 
