@@ -8,19 +8,20 @@ void reduceSequential(int *matrixList, int matrixAmount){
 		{INT_MAX, INT_MAX, INT_MAX}
 	};
 
-	for (int i = 0; i < 3; i++)
-	{
-		printf("[");
-		for (int j = 0; j < 3; j++)
+	int totalAmount = nextPowerOfTwo(matrixAmount);
+
+	while(totalAmount > 1){
+		for (int l = 0; l < totalAmount; l++)
 		{
-			for (int l = 0; l < matrixAmount; l++)
+			for (int i = 0; i < 9; i++)
 			{
-				output[i][j] = min(output[i][j], matrixList[l*9 + 3*i + j]);
+				matrixList[9 * l + i] = min(matrixList[9 * l + i], matrixList[9 * ((totalAmount/2) + l) + i]);
 			}
-			printf("%02d ,", output[i][j]);
 		}
-		printf("]\n");
+		totalAmount /= 2;
 	}
+
+	printMatrix(matrixList, 3, 3);
 }
 
 int main(int argc, char* argv[]) {
@@ -50,7 +51,7 @@ int main(int argc, char* argv[]) {
 
 	// printMatrix(generateRandomMatrix(3, 3),3, 3);
 
-	// reduceSequential(matrixList, matrixAmount);
+	reduceSequential(matrixList, matrixAmount);
 
 	return 0;
 }
