@@ -8,6 +8,10 @@ int min(int a, int b){
 	return b;
 }
 
+int nextPowerOfTwo(int n){
+	return pow(2, ceil(log(n) / log(2)));
+}
+
 
 void freeMatrixList(int **matrixList, int matrixAmount)
 {

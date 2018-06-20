@@ -5,10 +5,10 @@ LDFLAGS = -lpthread -lm
 OBJ = main.o helperFunctions.o ioFunctions.o
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< #$(CFLAGS)
 
 main: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
+	$(CC) -o $@ $^ #$(CFLAGS) $(LDFLAGS)
 
 .PHONY: clean
 clean:

@@ -1,11 +1,11 @@
 #include "helperFunctions.h"
 #include "ioFunctions.h"
 
-void reduceSequential(int **matrixList, int matrixAmount){
+void reduceSequential(int *matrixList, int matrixAmount){
 	int output[3][3] = {
-		{INT32_MAX, INT32_MAX, INT32_MAX},
-		{INT32_MAX, INT32_MAX, INT32_MAX},
-		{INT32_MAX, INT32_MAX, INT32_MAX}
+		{INT_MAX, INT_MAX, INT_MAX},
+		{INT_MAX, INT_MAX, INT_MAX},
+		{INT_MAX, INT_MAX, INT_MAX}
 	};
 
 	for (int i = 0; i < 3; i++)
@@ -15,8 +15,7 @@ void reduceSequential(int **matrixList, int matrixAmount){
 		{
 			for (int l = 0; l < matrixAmount; l++)
 			{
-				output[i][j] = min(output[i][j], matrixList[l][3 * i + j]);
-					// printf("%02d, ", matrixList[l][3 * i + j]);
+				output[i][j] = min(output[i][j], matrixList[l*9 + 3*i + j]);
 			}
 			printf("%02d ,", output[i][j]);
 		}
@@ -26,7 +25,7 @@ void reduceSequential(int **matrixList, int matrixAmount){
 
 int main(int argc, char* argv[]) {
 
-	struct timeval start, stop;
+	// struct timeval start, stop;
 	
 	if (argc != 2)
 	{
@@ -34,27 +33,19 @@ int main(int argc, char* argv[]) {
 		return 3;
 	}
 
-	int **matrixList;
+	int *matrixList;
 	int matrixAmount;
 
 	matrixList = readMatrices(&matrixAmount, "in1");
 
-	for (int l = 0; l < matrixAmount; l++)
+	for (int l = 0; l < nextPowerOfTwo(matrixAmount); l++)
 	{
-		for (int i = 0; i < 3; i++)
-		{
-			printf("[");
-			for (int j = 0; j < 3; j++)
-			{
-				printf("%02d, ", matrixList[l][3*i + j]);
-			}
-			printf("]\n");
-		}
+		printMatrix(&matrixList[9*l], 3, 3);
 		printf("***\n");
 	}
 	// saveMatrix(matrixList, matrixAmount, "out1");
 
-	generateRandomInputFile(5);
+	// generateRandomInputFile(5);
 	
 
 	// printMatrix(generateRandomMatrix(3, 3),3, 3);
