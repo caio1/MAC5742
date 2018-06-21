@@ -12,7 +12,7 @@
 #define HELPERFUNCTIONS_H
 
 #define MATRIX_WIDTH 3
-
+#define MATRIX_SIZE 9
 
 int min(int a, int b);
 int *generateRandomMatrix(int height, int width);

@@ -2,7 +2,7 @@
 
 int *readMatrices(int *matrixAmount, char *path)
 {
-	int * matrixList;
+	int *matrixList;
 
 	FILE *file;
 	file = fopen(path, "r");
@@ -22,10 +22,10 @@ int *readMatrices(int *matrixAmount, char *path)
 	for (int l = 0; l < *matrixAmount; l += 1)
 	{
 		fscanf(file, "%*s\n");
-		for (int i = 0; i < 9; i+=3)
+		for (int i = 0; i < MATRIX_SIZE; i += MATRIX_WIDTH)
 		{
 			if (fscanf(file, "%d %d %d\n",
-					   &matrixList[l*9 + i], &matrixList[l*9 + i + 1], &matrixList[l*9 + i + 2]) == EOF)
+					   &matrixList[l * MATRIX_SIZE + i], &matrixList[l * MATRIX_SIZE + i + 1], &matrixList[l * MATRIX_SIZE + i + 2]) == EOF)
 			{
 				printf("REACHED END OF FILE!!!\n\n\n");
 			}
@@ -34,11 +34,13 @@ int *readMatrices(int *matrixAmount, char *path)
 	return matrixList;
 }
 
-void saveMatrix(int **matrixList, int matrixAmount, char* path){
+void saveMatrix(int **matrixList, int matrixAmount, char *path)
+{
 	FILE *fp;
 	fp = fopen(path, "w");
 
-	if(fp == NULL){
+	if (fp == NULL)
+	{
 		printf("ERROR CREATING OUTPUT FILE\n");
 	}
 
@@ -46,9 +48,9 @@ void saveMatrix(int **matrixList, int matrixAmount, char* path){
 
 	for (int l = 0; l < matrixAmount; l++)
 	{
-		for (int i = 0; i < 9; i+=3)
+		for (int i = 0; i < 9; i += 3)
 		{
-			fprintf(fp, "%d %d %d\n", matrixList[l*9 + i], matrixList[l*9 + i + 1], matrixList[l*9 + i + 2]);
+			fprintf(fp, "%d %d %d\n", matrixList[l * 9 + i], matrixList[l * 9 + i + 1], matrixList[l * 9 + i + 2]);
 		}
 		fprintf(fp, "***\n");
 	}
