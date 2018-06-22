@@ -24,24 +24,25 @@ void freeMatrixList(int **matrixList, int matrixAmount)
 	free(matrixList);
 }
 
-void generateRandomInputFile(int matrixAmount)
+void generateRandomInputFile(int matrixAmount, char* path)
 {
+	srand(time(NULL));
 	int *matrixList[matrixAmount];
 	for (int l = 0; l < matrixAmount; l++)
 	{
-		matrixList[matrixAmount] = generateRandomMatrix(3, 3);
+
+		matrixList[l] = generateRandomMatrix(3, 3);
 	}
-	saveMatrix(matrixList, matrixAmount, "in2");
+
+	saveMatrix(matrixList, matrixAmount, path);
 }
 
 //creating test matrixes
 int *generateRandomMatrix(int height, int width)
 {
-	srand(time(NULL));
-
 	int *M;
 
-	M = malloc(height * width * sizeof(int *));
+	M = malloc(height * width * sizeof(int));
 
 	for (int i = 0; i < height; i++)
 	{

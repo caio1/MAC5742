@@ -48,9 +48,10 @@ void saveMatrix(int **matrixList, int matrixAmount, char *path)
 
 	for (int l = 0; l < matrixAmount; l++)
 	{
+
 		for (int i = 0; i < 9; i += 3)
 		{
-			fprintf(fp, "%d %d %d\n", matrixList[l * 9 + i], matrixList[l * 9 + i + 1], matrixList[l * 9 + i + 2]);
+			fprintf(fp, "%d %d %d\n", matrixList[l][i], matrixList[l][i + 1], matrixList[l][i + 2]);
 		}
 		fprintf(fp, "***\n");
 	}

@@ -18,7 +18,7 @@ int min(int a, int b);
 int *generateRandomMatrix(int height, int width);
 void printMatrix(int *M, int height, int width);
 void freeMatrixList(int **matrixList, int matrixAmount);
-void generateRandomInputFile(int matrixAmount);
+void generateRandomInputFile(int matrixAmount, char* path);
 int nextPowerOfTwo(int n);
 
 #endif
