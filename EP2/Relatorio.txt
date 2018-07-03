@@ -1,0 +1,7 @@
+Relatório de entrega EP2 - Caio Lopes Demario
+
+Solução implementada:
+
+- Dada uma lista de matrizes de tamanho N, a lista é completada para conter um número de elementos que seja potência de dois, a solução implementada divide a lista em duas listas iguais e cada thread na GPU compara o i-ésimo da primeira lista com o i-ésimo elemento da segunda lista, e os resultados são depositados na primeira lista. O processo se repete dividindo a lista novamente e chamando o kernel com metade do tamanho da lista até que a primeira matriz da lista contenha os elementos mínimos de todas as outras matrizes.
+
+- Como o cálculo de mínimo precisa ser executado muitas vezes, e cada comparação independe de outros elementos da lista, este se torna um problema viável de ser paralelizado em GPU. O mesmo algorítmo rodando em uma thread na CPU tem complexidade O((P + log(P)), onde P = M + N, N é o número de elementos da lista e N + M é uma potência de 2, enquanto que em GPU isso cai para O(log(P)), pois cada iteração do algorítmo se torna O(1).

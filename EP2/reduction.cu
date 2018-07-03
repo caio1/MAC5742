@@ -3,19 +3,25 @@ extern "C" {
 	#include "reduction.h"
 }
 
+__device__ int gpu_min(int x, int y){
+	return y ^ ((x ^ y) & -(x < y));
+}
+
 __global__ void reductionGPU(int* d_matrixList, int matrix_size, int totalAmount){
 
 	int id = blockIdx.x * blockDim.x + threadIdx.x;
-	if (id < (totalAmount/2)*matrix_size){
-		d_matrixList[id] = min(d_matrixList[id], d_matrixList[id + matrix_size*(totalAmount/2)]);
+	if (id < (totalAmount/2)){
+		d_matrixList[id] = gpu_min(d_matrixList[id], d_matrixList[id + (totalAmount/2)]);
 	}
 
 }
 
 
-void reduceOnGPU(int *matrixList, int matrixAmount){
+int* reduceOnGPU(int *matrixList, int matrixAmount){
 	int totalAmount = nextPowerOfTwo(matrixAmount);
 	int *d_matrixList;
+
+	totalAmount = totalAmount*MATRIX_SIZE;
 
 	dim3 grid, block;
 	block.x = 1024;
@@ -23,13 +29,13 @@ void reduceOnGPU(int *matrixList, int matrixAmount){
 
 	int *output = (int*)malloc(MATRIX_SIZE * sizeof(int));
 
-    cudaSetDevice(0);
+    cudaSetDevice(1);
 
-	cudaMalloc((void**)&d_matrixList, totalAmount*MATRIX_SIZE*sizeof(int));
+	cudaMalloc((void**)&d_matrixList, totalAmount*sizeof(int));
 
-	cudaMemcpy(d_matrixList, matrixList, totalAmount*MATRIX_SIZE*sizeof(int), cudaMemcpyHostToDevice);
-	while(totalAmount > 1){
-		
+	cudaMemcpy(d_matrixList, matrixList, totalAmount*sizeof(int), cudaMemcpyHostToDevice);
+	while(totalAmount > MATRIX_SIZE){
+
 		reductionGPU<<<grid, block>>>(d_matrixList, MATRIX_SIZE, totalAmount);
 		cudaDeviceSynchronize();
 
@@ -41,4 +47,6 @@ void reduceOnGPU(int *matrixList, int matrixAmount){
 	cudaFree(matrixList);
 
 	printMatrix(output, MATRIX_WIDTH, MATRIX_WIDTH);
+
+	return output;
 }

@@ -24,15 +24,29 @@ void freeMatrixList(int **matrixList, int matrixAmount)
 	free(matrixList);
 }
 
-void generateRandomInputFile(int matrixAmount, char* path)
+int compareResults(int *sequential, int *gpu)
+{
+	for (int i = 0; i < MATRIX_SIZE; i++)
+	{
+		if (sequential[i] != gpu[i])
+		{
+			return 0;
+		}
+	}
+	return 1;
+}
+
+void generateRandomInputFile(int matrixAmount, char *path)
 {
 	srand(time(NULL));
+	printf("generating input file\n");
 	int *matrixList[matrixAmount];
 	for (int l = 0; l < matrixAmount; l++)
 	{
 
 		matrixList[l] = generateRandomMatrix(3, 3);
 	}
+	printf("finished generating random matrices\n");
 
 	saveMatrix(matrixList, matrixAmount, path);
 }
@@ -48,7 +62,7 @@ int *generateRandomMatrix(int height, int width)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			M[3 * i + j] = rand() % (INT_MAX / 2 - INT_MIN / 2) + INT_MIN / 2;
+			M[3 * i + j] = rand() % (10000) - 10000;
 		}
 	}
 
