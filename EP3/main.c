@@ -1,5 +1,6 @@
 #include "helperFunctions.h"
 #include "ioFunctions.h"
+#include "reduction.h"
 
 void drawSamples()
 {
@@ -150,6 +151,8 @@ int main(int argc, char *argv[])
 	integral_minus = 2 * calculateIntegral(ZERO, 0.5, -1);
 	printf("Integrais: \nSoma: %lf\nSubracao: %lf\n", integral_plus, integral_minus);
 	gettimeofday(&end, NULL);
+
+	reduceOnGPU();
 
 	printTimeElapsed(begin, end);
 

@@ -10,6 +10,11 @@ int min(int a, int b)
 	return b;
 }
 
+int nextPowerOfTwo(int n)
+{
+	return pow(2, ceil(log(n) / log(2)));
+}
+
 double randomSample(double min, double max)
 {
 	double range = (max - min);
@@ -19,7 +24,7 @@ double randomSample(double min, double max)
 
 void printTimeElapsed(struct timeval begin, struct timeval end)
 {
-	float elapsedTime = 1000000 * (float)(end.tv_sec - begin.tv_sec);
-	elapsedTime += (float)(end.tv_usec - begin.tv_usec);
-	printf("\nExecution Time (microseconds): %9.2f\n\n", elapsedTime);
+	float elapsedTime = (float)(end.tv_sec - begin.tv_sec);
+	elapsedTime += (float)(end.tv_usec - begin.tv_usec) / 1000000;
+	printf("\nExecution Time (seconds): %9.5f\n\n", elapsedTime);
 }

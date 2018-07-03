@@ -29,6 +29,7 @@ double f;
 double fsquared;
 
 int min(int a, int b);
+int nextPowerOfTwo(int n);
 double randomSample(double min, double max);
 void printTimeElapsed(struct timeval begin, struct timeval end);
 

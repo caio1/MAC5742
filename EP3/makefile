@@ -1,8 +1,8 @@
-CC=gcc
-CFLAGS  = -O3 -march=native -flto -g -Wall -pedantic
+CC=nvcc
+CFLAGS  = -O3 -Xptxas --opt-level=3
 DEPS = helperFunctions.h ioFunctions.h reduction.h
 LDFLAGS = -lpthread -lm
-OBJ = main.o helperFunctions.o ioFunctions.o
+OBJ = main.o helperFunctions.o ioFunctions.o reduction.o
 
 %.o: %.cu $(DEPS)
 	$(CC) -c -o $@ $< #$(CFLAGS)
