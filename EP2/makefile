@@ -1,17 +1,17 @@
 CC=nvcc
-CFLAGS  = -O3 -march=native -flto -g -Wall -pedantic -fopenmp
+CFLAGS = -O3 -Xptxas --opt-level=3 #-DDEBUG
 DEPS = helperFunctions.h ioFunctions.h reduction.h
-LDFLAGS = -lpthread -lm
+LDFLAGS = -lm
 OBJ = main.o helperFunctions.o ioFunctions.o reduction.o
 
 %.o: %.cu $(DEPS)
-	$(CC) -c -o $@ $< #$(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< #$(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 main: $(OBJ)
-	$(CC) -o $@ $^ #$(CFLAGS) $(LDFLAGS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
 
 .PHONY: clean
 clean:
