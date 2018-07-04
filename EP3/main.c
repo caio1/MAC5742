@@ -37,17 +37,6 @@ void calculate_f_sequential()
 	fsquared = sumsq / N;
 }
 
-double sum_array(double *a, int64_t n)
-{
-	double sum = 0;
-	int64_t i;
-	for (i = 0; i < n; i++)
-	{
-		sum += a[i];
-	}
-	return sum;
-}
-
 void *calculate_f_pthreads(void *args)
 {
 	thread_args_ptr threadArgs = (thread_args_ptr)args;
@@ -108,6 +97,9 @@ void calculate_f_CPU()
 
 	f = f / N;
 	fsquared = fsquared / N;
+
+	printf("f = %lf\n", f);
+	printf("f_squared = %lf\n", fsquared);
 }
 
 double calculateIntegral(double a, double b, double sig)
@@ -151,12 +143,13 @@ int main(int argc, char *argv[])
 	integral_minus = 2 * calculateIntegral(ZERO, 0.5, -1);
 	printf("Integrais: \nSoma: %lf\nSubracao: %lf\n", integral_plus, integral_minus);
 	gettimeofday(&end, NULL);
-
-	reduceOnGPU();
-
 	printTimeElapsed(begin, end);
 
-	printf("%d\n", samples);
+	gettimeofday(&begin, NULL);
+
+	reduceOnGPU();
+	gettimeofday(&end, NULL);
+	printTimeElapsed(begin, end);
 
 	free(samples);
 

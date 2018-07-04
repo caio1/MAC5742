@@ -30,6 +30,7 @@ double fsquared;
 
 int min(int a, int b);
 int nextPowerOfTwo(int n);
+double sum_array(double *a, int64_t n);
 double randomSample(double min, double max);
 void printTimeElapsed(struct timeval begin, struct timeval end);
 

@@ -15,6 +15,17 @@ int nextPowerOfTwo(int n)
 	return pow(2, ceil(log(n) / log(2)));
 }
 
+double sum_array(double *a, int64_t n)
+{
+	double sum = 0;
+	int64_t i;
+	for (i = 0; i < n; i++)
+	{
+		sum += a[i];
+	}
+	return sum;
+}
+
 double randomSample(double min, double max)
 {
 	double range = (max - min);

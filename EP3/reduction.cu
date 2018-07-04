@@ -14,12 +14,18 @@ __device__ int gpu_min(int x, int y){
 // 	return min + (rand() / div);
 // }
 
-__global__ void create_f_array(double* f_array, double* f_squared_array, double* samples, int64_t n){
+__device__ double fun_gpu(double x, int64_t M, int64_t k)
+{
+	double result = (sin((2 * M + 1) * M_PI * x) * cos(2 * M_PI * k * x)) / sin(M_PI * x);
+	return result;
+}
+
+__global__ void create_f_array(double* f_array, double* f_squared_array, double* samples, int64_t n, int64_t M, int64_t k){
 	int id = blockIdx.x * blockDim.x + threadIdx.x;
 	if (id < n){
-		double sample = samples[id];
-		f_array[id] = sample;
-		f_squared_array[id] = sample; 
+		double f_xi = fun_gpu(samples[id], M, k);
+		f_array[id] = f_xi ;
+		f_squared_array[id] = f_xi * f_xi ;
 	}
 }
 
@@ -61,7 +67,7 @@ void reduceOnGPU(){
 	cudaMemcpy(d_samples, samples, N*sizeof(double), cudaMemcpyHostToDevice);
 
 
-	create_f_array<<<grid, block>>>(d_f_array, d_f_squared_array, d_samples, N);
+	create_f_array<<<grid, block>>>(d_f_array, d_f_squared_array, d_samples, N, M, k);
 
 	while(totalAmount > 1){
 
@@ -72,15 +78,18 @@ void reduceOnGPU(){
 		grid.x = (totalAmount + block.x - 1) / block.x;
 	}
 	cudaMemcpy(&f, d_f_array, sizeof(double), cudaMemcpyDeviceToHost);
-	cudaMemcpy(&fsquared, d_f_array, sizeof(double), cudaMemcpyDeviceToHost);
+	cudaMemcpy(&fsquared, d_f_squared_array, sizeof(double), cudaMemcpyDeviceToHost);
 
 	cudaFree(d_f_array);
 	cudaFree(d_f_squared_array);
 
+	f = f/N;
+	fsquared = fsquared/N;
+
+
+	printf("\n\nGPU\n");
 	printf("f = %lf\n", f);
 	printf("f_squared = %lf\n", fsquared);
-
-	printf("GPU\n");
 	double integral_plus = 2 * integral(ZERO, 0.5, 1);
 	double integral_minus = 2 * integral(ZERO, 0.5, -1);
 	printf("Integrais: \nSoma: %lf\nSubracao: %lf\n", integral_plus, integral_minus);
