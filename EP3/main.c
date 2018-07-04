@@ -95,6 +95,9 @@ void calculate_f_CPU()
 		fsquared += partial_sum_sq[i];
 	}
 
+	free(partial_sum);
+	free(partial_sum_sq);
+
 	f = f / N;
 	fsquared = fsquared / N;
 
@@ -114,6 +117,12 @@ int main(int argc, char *argv[])
 
 	MPI_Init(NULL, NULL);
 
+	int rank, size;
+
+	// Get MPI rank and size
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	MPI_Comm_size(MPI_COMM_WORLD, &size);
+
 	if (argc < 4)
 	{
 		printf("Usage: %s <numero_de_amostras> <parametro_k> <parametro_M>\n", argv[0]);
@@ -127,6 +136,8 @@ int main(int argc, char *argv[])
 
 	drawSamples();
 
+	// Executing using pthreads
+
 	clock_gettime(CLOCK_REALTIME, &begin);
 	printf("\nExecutando com pthreads\n");
 	calculate_f_CPU();
@@ -137,9 +148,10 @@ int main(int argc, char *argv[])
 
 	printTimeElapsed(begin, end);
 
+	// Executing sequentially
+
 	clock_gettime(CLOCK_REALTIME, &begin);
 	printf("\nExecutando sequencialmente\n");
-
 	calculate_f_sequential();
 	integral_plus = 2 * calculateIntegral(ZERO, 0.5, 1);
 	integral_minus = 2 * calculateIntegral(ZERO, 0.5, -1);
@@ -147,13 +159,14 @@ int main(int argc, char *argv[])
 	clock_gettime(CLOCK_REALTIME, &end);
 	printTimeElapsed(begin, end);
 
-	clock_gettime(CLOCK_REALTIME, &begin);
+	// Executing using cuda
 
-	reduceOnGPU();
+	clock_gettime(CLOCK_REALTIME, &begin);
+	integrateOnGPU();
 	clock_gettime(CLOCK_REALTIME, &end);
 	printTimeElapsed(begin, end);
 
-	free(samples);
+	free(samples); //haha
 
 	return 0;
 }

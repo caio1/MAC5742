@@ -1,3 +1,3 @@
 #include "helperFunctions.h"
 
-void reduceOnGPU();
+void integrateOnGPU();

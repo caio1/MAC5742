@@ -45,11 +45,13 @@ double integral(double a, double b, double sig)
 }
 
 
-void reduceOnGPU(){
+void integrateOnGPU(){
 	int64_t totalAmount = nextPowerOfTwo(N);
 	double *d_f_array;
 	double *d_f_squared_array;
 	double *d_samples;
+	struct timespec begin, end;
+
 
 
 	dim3 grid, block;
@@ -64,7 +66,13 @@ void reduceOnGPU(){
 
 	cudaMemset(d_f_array, 0, totalAmount*sizeof(double));
 	cudaMemset(d_f_squared_array, 0, totalAmount*sizeof(double));
+
+	printf("Time spent copying data");
+	clock_gettime(CLOCK_REALTIME, &begin);
 	cudaMemcpy(d_samples, samples, N*sizeof(double), cudaMemcpyHostToDevice);
+	clock_gettime(CLOCK_REALTIME, &end);
+	printTimeElapsed(begin, end);
+
 
 
 	create_f_array<<<grid, block>>>(d_f_array, d_f_squared_array, d_samples, N, M, k);
