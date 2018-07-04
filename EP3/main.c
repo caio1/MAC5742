@@ -109,8 +109,10 @@ double calculateIntegral(double a, double b, double sig)
 
 int main(int argc, char *argv[])
 {
-	struct timeval begin, end;
+	struct timespec begin, end;
 	srand(time(NULL));
+
+	MPI_Init(NULL, NULL);
 
 	if (argc < 4)
 	{
@@ -123,32 +125,32 @@ int main(int argc, char *argv[])
 	M = strtoll(argv[3], NULL, 10);
 	samples = malloc(N * sizeof(double));
 
-	drawSamples(samples);
+	drawSamples();
 
-	gettimeofday(&begin, NULL);
+	clock_gettime(CLOCK_REALTIME, &begin);
 	printf("\nExecutando com pthreads\n");
 	calculate_f_CPU();
 	double integral_plus = 2 * calculateIntegral(ZERO, 0.5, 1);
 	double integral_minus = 2 * calculateIntegral(ZERO, 0.5, -1);
 	printf("Integrais: \nSoma: %lf\nSubracao: %lf\n", integral_plus, integral_minus);
-	gettimeofday(&end, NULL);
+	clock_gettime(CLOCK_REALTIME, &end);
 
 	printTimeElapsed(begin, end);
 
-	gettimeofday(&begin, NULL);
+	clock_gettime(CLOCK_REALTIME, &begin);
 	printf("\nExecutando sequencialmente\n");
 
 	calculate_f_sequential();
 	integral_plus = 2 * calculateIntegral(ZERO, 0.5, 1);
 	integral_minus = 2 * calculateIntegral(ZERO, 0.5, -1);
 	printf("Integrais: \nSoma: %lf\nSubracao: %lf\n", integral_plus, integral_minus);
-	gettimeofday(&end, NULL);
+	clock_gettime(CLOCK_REALTIME, &end);
 	printTimeElapsed(begin, end);
 
-	gettimeofday(&begin, NULL);
+	clock_gettime(CLOCK_REALTIME, &begin);
 
 	reduceOnGPU();
-	gettimeofday(&end, NULL);
+	clock_gettime(CLOCK_REALTIME, &end);
 	printTimeElapsed(begin, end);
 
 	free(samples);

@@ -33,9 +33,9 @@ double randomSample(double min, double max)
 	return min + (rand() / div);
 }
 
-void printTimeElapsed(struct timeval begin, struct timeval end)
+void printTimeElapsed(struct timespec begin, struct timespec end)
 {
 	float elapsedTime = (float)(end.tv_sec - begin.tv_sec);
-	elapsedTime += (float)(end.tv_usec - begin.tv_usec) / 1000000;
+	elapsedTime += (float)(end.tv_nsec - begin.tv_nsec) / 1000000000;
 	printf("\nExecution Time (seconds): %9.5f\n\n", elapsedTime);
 }

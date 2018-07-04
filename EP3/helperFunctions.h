@@ -7,6 +7,7 @@
 #include <pthread.h>
 #include <limits.h>
 #include <sys/types.h>
+#include <mpi.h>
 
 #ifndef HELPERFUNCTIONS_H
 #define HELPERFUNCTIONS_H
@@ -32,6 +33,6 @@ int min(int a, int b);
 int nextPowerOfTwo(int n);
 double sum_array(double *a, int64_t n);
 double randomSample(double min, double max);
-void printTimeElapsed(struct timeval begin, struct timeval end);
+void printTimeElapsed(struct timespec begin, struct timespec end);
 
 #endif
