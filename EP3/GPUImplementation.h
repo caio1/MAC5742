@@ -1,3 +1,3 @@
 #include "helperFunctions.h"
 
-void integrateOnGPU();
+void calculate_f_GPU();

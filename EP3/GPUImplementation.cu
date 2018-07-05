@@ -1,6 +1,6 @@
 // #include <stdlib.h>
 extern "C" {
-	#include "reduction.h"
+	#include "GPUImplementation.h"
 }
 
 __device__ int gpu_min(int x, int y){
@@ -39,20 +39,14 @@ __global__ void reductionGPU(double* f_array, double* f_squared_array, int64_t t
 
 }
 
-double integral(double a, double b, double sig)
-{
-	return (b - a) * (f + sig * sqrt((fsquared - pow(f, 2)) / N));
-}
 
-
-void integrateOnGPU(){
+void calculate_f_GPU(){
 	int64_t totalAmount = nextPowerOfTwo(N);
 	double *d_f_array;
 	double *d_f_squared_array;
 	double *d_samples;
+
 	struct timespec begin, end;
-
-
 
 	dim3 grid, block;
 	block.x = 1024;
@@ -93,14 +87,5 @@ void integrateOnGPU(){
 
 	f = f/N;
 	fsquared = fsquared/N;
-
-
-	printf("\n\nGPU\n");
-	printf("f = %lf\n", f);
-	printf("f_squared = %lf\n", fsquared);
-	double integral_plus = 2 * integral(ZERO, 0.5, 1);
-	double integral_minus = 2 * integral(ZERO, 0.5, -1);
-	printf("Integrais: \nSoma: %lf\nSubracao: %lf\n", integral_plus, integral_minus);
-	// printMatrix(output, MATRIX_WIDTH, MATRIX_WIDTH);
 
 }

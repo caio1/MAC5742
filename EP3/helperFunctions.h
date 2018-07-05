@@ -7,12 +7,13 @@
 #include <pthread.h>
 #include <limits.h>
 #include <sys/types.h>
+#include <sys/sysinfo.h>
 #include <mpi.h>
 
 #ifndef HELPERFUNCTIONS_H
 #define HELPERFUNCTIONS_H
-#define NUM_THREADS 4
-#define ZERO pow(10, -32)
+#define NUM_THREADS get_nprocs()
+#define ZERO pow(10, -320)
 
 typedef struct thread_args
 {
@@ -28,6 +29,8 @@ int64_t M, N, k;
 double *samples;
 double f;
 double fsquared;
+
+double fun(double x);
 
 int min(int a, int b);
 int nextPowerOfTwo(int n);

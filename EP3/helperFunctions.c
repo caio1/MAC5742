@@ -1,5 +1,5 @@
 #include "helperFunctions.h"
-#include "ioFunctions.h"
+#include "CPUImplementations.h"
 
 int min(int a, int b)
 {
@@ -8,6 +8,11 @@ int min(int a, int b)
 		return a;
 	}
 	return b;
+}
+
+double fun(double x)
+{
+	return (sin((2 * M + 1) * M_PI * x) * cos(2 * M_PI * k * x)) / sin(M_PI * x);
 }
 
 int nextPowerOfTwo(int n)
